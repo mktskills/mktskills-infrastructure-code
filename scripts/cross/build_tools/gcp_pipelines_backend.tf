@@ -100,9 +100,9 @@ module "pipeline_backend_prod" {
   location           = local.env_main_region
   pipeline_id        = "${local.project_folder_code}-backend-code-prod"
   env                = "prod"
-  description        = "CI/CD pipeline for mktskills backend — main branch"
+  description        = "CI/CD pipeline for mktskills backend — master branch"
   repo_type          = "GITHUB"
-  repo_branch_regexp = "^main$"
+  repo_branch_regexp = "^master$"
   repo_name          = "mktskills/mktskills-backend-app"
   build_policies = [{
     role       = "roles/artifactregistry.writer"

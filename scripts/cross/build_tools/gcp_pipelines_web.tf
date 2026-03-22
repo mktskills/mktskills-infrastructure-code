@@ -123,7 +123,7 @@ module "pipeline_web_app_prod" {
   env                = "prod"
   description        = "CI/CD pipeline for mktskills web app — prod branch"
   repo_type          = "GITHUB"
-  repo_branch_regexp = "^main$"
+  repo_branch_regexp = "^master$"
   repo_name          = "mktskills/mktskills-web-app"
   deploy_project_id  = local.project_id_prod
   deploy_policies = [{
