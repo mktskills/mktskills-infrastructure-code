@@ -2,17 +2,18 @@
 ## CDN Websites — Web App (Astro + Vite SPA)
 ##################################################
 
-module "platform_web_app_stage" {
+module "platform_web_app_dev" {
   source = "../../../modules/gcp_cdn_website"
   providers = {
-    google = google
+    google      = google
+    google-beta = google-beta
   }
   project_id = local.project_id
 
-  website_id              = "${local.project_folder_code}-webapp-website-stage"
+  website_id              = "${local.project_folder_code}-webapp-website-dev"
   bucket_location         = local.env_main_region
-  subdomains              = ["app-stage"]
-  full_domains            = ["app-stage.mktskills.ai"]
+  subdomains              = ["app-dev"]
+  full_domains            = ["app-dev.mktskills.ai"]
   dns_managed_zone_name   = "dnszone-${local.project_folder_code}-mktskillsai"
   dns_managed_zone_project_id = local.dns_zone_project_id
 
@@ -26,7 +27,8 @@ module "platform_web_app_stage" {
 module "platform_web_app_prod" {
   source = "../../../modules/gcp_cdn_website"
   providers = {
-    google = google
+    google      = google
+    google-beta = google-beta
   }
   project_id = local.project_id
 

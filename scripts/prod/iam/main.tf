@@ -11,5 +11,5 @@ locals {
 }
 
 output "service_account_backend_apiserver_email" {
-  value = module.sa_backend_apiserver.email
+  value = module.sa_backend_apiserver.service_account_email
 }

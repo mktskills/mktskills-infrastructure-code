@@ -73,7 +73,7 @@ resource "google_cloudbuild_trigger" "repo_trigger" {
     }
 
     options {
-      substitution_option = "ALLOW_LOOSE"
+      substitution_option = "MUST_MATCH"
       env                 = concat(
         var.env_vars,
         local.base_substitutions_as_env_vars,

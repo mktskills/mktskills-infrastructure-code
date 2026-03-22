@@ -105,7 +105,7 @@ resource "google_compute_backend_service" "lb_backend" {
   project  = var.project_id
 
   name          = "cptback-${var.backend_id}"
-  protocol      = "HTTP2"
+  protocol      = "HTTPS"
 
   dynamic "backend" {
     for_each = {
@@ -145,7 +145,7 @@ resource "google_compute_url_map" "lb_map_https" {
   }
 
   test {
-    host = "https://${var.subdomains[0]}.${trimsuffix(data.google_dns_managed_zone.lb_dns_zone.dns_name, ".")}"
+    host = length(var.subdomains) > 0 ? "${var.subdomains[0]}.${trimsuffix(data.google_dns_managed_zone.lb_dns_zone.dns_name, ".")}" : "example.com"
     path = "/"
     service = google_compute_backend_service.lb_backend.id
   }

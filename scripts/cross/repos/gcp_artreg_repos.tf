@@ -8,7 +8,7 @@ module "backend_artifacts_repo" {
     google = google
   }
   project_id  = local.project_id
-  repo_id     = "aregrepo-${local.project_folder_code}-backend-cross"
+  repository_id = "aregrepo-${local.project_folder_code}-backend-cross"
   location    = local.env_main_region
   format      = "DOCKER"
   description = "Docker images for mktskills backend"

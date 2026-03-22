@@ -34,7 +34,7 @@ locals {
       "--platform=managed",
       "--project=${local.project_id_prod}",
       "--service-account=$_SERVICE_ACCOUNT",
-      "--allow-unauthenticated",
+      "--no-allow-unauthenticated",
       "--ingress=internal-and-cloud-load-balancing",
       "--cpu-throttling",
       "--memory=$_CLOUDRUN_MEMORY",
@@ -45,7 +45,7 @@ locals {
   }
 }
 
-module "pipeline_backend_stage" {
+module "pipeline_backend_dev" {
   source                             = "../../../modules/gcp_pipeline"
   map_base_substitutions_to_env_vars = true
   providers = {
@@ -54,11 +54,11 @@ module "pipeline_backend_stage" {
   project_id = local.project_id
 
   location           = local.env_main_region
-  pipeline_id        = "${local.project_folder_code}-backend-code-stage"
-  env                = "stage"
-  description        = "CI/CD pipeline for mktskills backend — stage branch"
+  pipeline_id        = "${local.project_folder_code}-backend-code-dev"
+  env                = "dev"
+  description        = "CI/CD pipeline for mktskills backend — dev branch"
   repo_type          = "GITHUB"
-  repo_branch_regexp = "^stage$"
+  repo_branch_regexp = "^dev$"
   repo_name          = "mktskills/mktskills-backend-app"
   build_policies = [{
     role       = "roles/artifactregistry.writer"
@@ -67,7 +67,7 @@ module "pipeline_backend_stage" {
   deploy_project_id = local.project_id_prod
   deploy_policies = [{
     role       = "roles/run.developer"
-    expression = "resource.name.startsWith(\"projects/${local.project_id_prod}/locations/${local.env_main_region}/services/crunserv-${local.project_folder_code}-backend-apiserver-stage\")"
+    expression = "resource.name.startsWith(\"projects/${local.project_id_prod}/locations/${local.env_main_region}/services/crunserv-${local.project_folder_code}-backend-apiserver-dev\")"
   }]
   steps = [
     local.backend_build_step,
@@ -76,9 +76,9 @@ module "pipeline_backend_stage" {
   ]
   env_vars = [
     "_IMAGE_NAME=mktskills-backend-apiserver",
-    "_ENV=stage",
+    "_ENV=dev",
     "_DEPLOY_PROJECT_ID=${local.project_id_prod}",
-    "_SERVICE_NAME=crunserv-${local.project_folder_code}-backend-apiserver-stage",
+    "_SERVICE_NAME=crunserv-${local.project_folder_code}-backend-apiserver-dev",
     "_SERVICE_ACCOUNT=sa-${local.project_folder_code}-backend-apiserver@${local.project_id_prod}.iam.gserviceaccount.com",
     "_CLOUDRUN_MEMORY=512Mi",
     "_CLOUDRUN_VCPU=1",

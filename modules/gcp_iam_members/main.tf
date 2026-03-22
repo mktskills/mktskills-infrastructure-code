@@ -26,7 +26,7 @@ locals {
 
 resource "google_project_iam_member" "iam_member" {
   for_each = {
-    for index, member_role_pair in local.member_role_pairs : index => member_role_pair
+    for member_role_pair in local.member_role_pairs : "${member_role_pair.principal}-${member_role_pair.role}" => member_role_pair
   }
   project = var.project_id
 

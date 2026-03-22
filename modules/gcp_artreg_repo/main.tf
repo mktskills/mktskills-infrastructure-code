@@ -10,7 +10,7 @@ resource "google_artifact_registry_repository" "artreg_repo" {
   provider = google
   project  = var.project_id
 
-  repository_id = "aregrepo-${var.repository_id}"
+  repository_id = var.repository_id
   format        = var.format
   location      = var.location
   description   = var.description
@@ -39,9 +39,9 @@ resource "google_artifact_registry_repository" "artreg_repo" {
       dynamic "upstream_policies" {
         for_each = { for upstream_policy in var.virtual_repo_upstream_policies : upstream_policy.id => upstream_policy }
         content {
-          id  = each.value.id
-          repository = each.value.repository
-          priority = lookup(each.value, "priority", null)
+          id  = upstream_policies.value.id
+          repository = upstream_policies.value.repository
+          priority = lookup(upstream_policies.value, "priority", null)
         }
       }        
     }

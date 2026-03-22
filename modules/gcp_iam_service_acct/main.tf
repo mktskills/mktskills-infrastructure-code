@@ -77,16 +77,6 @@ resource "google_service_account_iam_member" "service_account_user" {
   member = var.members[count.index]
 }
 
-resource "google_service_account_iam_member" "service_account_user_for_token_creator" {
-  provider = google
-  count    = length(var.members_token_creator)
-
-  service_account_id = google_service_account.service_account.name
-  role               = "roles/iam.serviceAccountUser"
-
-  member = var.members_token_creator[count.index]
-}
-
 resource "google_service_account_iam_member" "service_account_token_creator" {
   provider = google
   count = length(var.members_token_creator)

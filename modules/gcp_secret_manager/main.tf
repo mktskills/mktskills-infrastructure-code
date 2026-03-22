@@ -28,7 +28,7 @@ resource "google_secret_manager_secret_iam_member" "member" {
   count      = length(var.read_principals)
   project     = var.project_id
 
-  secret_id   = var.secret_id
+  secret_id   = google_secret_manager_secret.my_secret.secret_id
   role = "roles/secretmanager.secretAccessor"
   member = var.read_principals[count.index]
 

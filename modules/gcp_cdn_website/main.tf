@@ -31,13 +31,13 @@ resource "google_storage_bucket" "website_bucket" {
   }
 }
 
-resource "google_storage_default_object_access_control" "website_read" {
+resource "google_storage_bucket_iam_member" "website_public_read" {
   provider = google
   count    = var.backend_type == "BUCKET" ? 1 : 0
 
   bucket = google_storage_bucket.website_bucket[0].name
-  role   = "READER"
-  entity = "allUsers"
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
 
 resource "google_storage_bucket_iam_member" "bucket_editors" {
@@ -188,15 +188,6 @@ resource "google_compute_backend_service" "cdn_backend_external" {
         }
       }
 
-      dynamic "cache_key_policy" {
-        for_each = cdn_policy.value.cache_key_policy == null ? [1] : []
-        content {
-          include_host           = true
-          include_protocol       = true
-          include_query_string   = true
-        }
-      }
-
       dynamic "negative_caching_policy" {
         for_each = cdn_policy.value.negative_caching_policy != null ? cdn_policy.value.negative_caching_policy : []
         content {
@@ -253,7 +244,7 @@ resource "google_compute_url_map" "cdn_map_https" {
   dynamic "test" {
     for_each = var.backend_type == "BUCKET" || var.backend_type == "EXTERNAL_URL" ? [1] : []
     content {
-      host    = "https://${length(local.domain_names) > 0 ? local.domain_names[0] : "example.com"}"
+      host    = length(local.domain_names) > 0 ? local.domain_names[0] : "example.com"
       path    = "/"
       service = var.backend_type == "BUCKET" ? google_compute_backend_bucket.cdn_backend[0].id : google_compute_backend_service.cdn_backend_external[0].id
     }
@@ -269,7 +260,6 @@ resource "google_compute_url_map" "cdn_map_http" {
   default_url_redirect {
     https_redirect = true
     strip_query    = false
-    prefix_redirect = ""
   }
 }
 
@@ -284,9 +274,11 @@ resource "google_compute_target_https_proxy" "cdn_target_proxy_https" {
 }
 
 resource "google_compute_ssl_policy" "cdn_ssl_policy" {
-  name            = "cpttspxy-${var.website_id}"
-  profile         = "MODERN"
-  min_tls_version = "TLS_1_2"
+  provider = google
+  project  = var.project_id
+  name     = "cptsslp-${var.website_id}"
+  profile  = "MODERN"
+  min_tls_version = var.min_tls_version
 }
 
 resource "google_compute_target_http_proxy" "cdn_target_proxy_http" {

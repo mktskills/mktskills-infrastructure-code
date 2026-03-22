@@ -2,11 +2,6 @@ variable "project_id" {
   description = "The project ID where the secret will be created"
 }
 
-variable "project_folder_code" {
-  description = "Code of the GCP project to be used"
-  type        = string
-}
-
 variable "secret_id" {
   description = "The ID of the secret to create"
 }
@@ -14,6 +9,7 @@ variable "secret_id" {
 variable "secret_data" {
   description = "The secret data. This is sensitive and should be treated as such."
   type        = string
+  sensitive   = true
   default     = null
 }
 
@@ -35,11 +31,5 @@ variable "user_managed_replicas" {
   type        = list(string)
   default     = []
 }
-
-# variable "write_principals" {
-#   description = "List of principals granted write access to the repo"
-#   type        = list(string)
-#   default     = []
-# }
 
 
