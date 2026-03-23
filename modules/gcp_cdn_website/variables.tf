@@ -141,3 +141,9 @@ variable "bucket_editors" {
   default     = []
 }
 
+variable "enable_llm_discovery" {
+  description = "When true, adds a URL map route rule that redirects GET requests with Accept: text/markdown to /llms.txt. Also requires the caller to include Accept in cdn_policy.cache_key_policy.include_http_headers."
+  type        = bool
+  default     = false
+}
+

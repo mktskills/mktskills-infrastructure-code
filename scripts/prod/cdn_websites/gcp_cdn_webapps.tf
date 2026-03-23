@@ -39,10 +39,17 @@ module "platform_web_app_prod" {
   dns_managed_zone_name   = "dnszone-${local.project_folder_code}-mktskillsai"
   dns_managed_zone_project_id = local.dns_zone_project_id
 
+  enable_llm_discovery = true
+
   cdn_policy = {
     max_ttl     = 3600
     default_ttl = 3600
     client_ttl  = 3600
+    # Include Accept in the cache key so CDN serves separate cached responses
+    # for text/markdown vs text/html requests (required for content negotiation).
+    cache_key_policy = [{
+      include_http_headers = ["Accept"]
+    }]
   }
 
   custom_response_headers = [

@@ -221,14 +221,18 @@ resource "google_compute_global_network_endpoint" "external_backend" {
   port                          = 443
 }
 
+locals {
+  _backend_id = var.backend_type == "BUCKET" ? google_compute_backend_bucket.cdn_backend[0].id : (
+    var.backend_type == "EXTERNAL_URL" ? google_compute_backend_service.cdn_backend_external[0].id : null
+  )
+}
+
 resource "google_compute_url_map" "cdn_map_https" {
   provider = google
   project  = var.project_id
 
   name            = "cptumaps-${var.website_id}"
-  default_service = var.backend_type == "BUCKET" ? google_compute_backend_bucket.cdn_backend[0].id : (
-    var.backend_type == "EXTERNAL_URL" ? google_compute_backend_service.cdn_backend_external[0].id : null
-  )
+  default_service = local._backend_id
 
   dynamic "default_url_redirect" {
     for_each = var.backend_type != "BUCKET" && var.backend_type != "EXTERNAL_URL" ? [1] : []
@@ -241,12 +245,52 @@ resource "google_compute_url_map" "cdn_map_https" {
       }
   }
 
+  # LLM content-negotiation: redirect Accept: text/markdown to /llms.txt
+  # Only activates when enable_llm_discovery = true and backend has real content.
+  dynamic "host_rule" {
+    for_each = var.enable_llm_discovery && (var.backend_type == "BUCKET" || var.backend_type == "EXTERNAL_URL") ? [1] : []
+    content {
+      hosts        = ["*"]
+      path_matcher = "llm-discovery"
+    }
+  }
+
+  dynamic "path_matcher" {
+    for_each = var.enable_llm_discovery && (var.backend_type == "BUCKET" || var.backend_type == "EXTERNAL_URL") ? [1] : []
+    content {
+      name            = "llm-discovery"
+      default_service = local._backend_id
+
+      # Priority 1: redirect only page-like paths (no dot in last segment) when
+      # the client prefers text/markdown. Paths ending in .txt, .md, .ico, etc.
+      # fall through to default_service, preventing redirect loops.
+      route_rules {
+        priority = 1
+        match_rules {
+          # Matches paths where every segment is dot-free: /, /features, /blog/post, …
+          # Does NOT match /llms.txt, /ai.txt, /favicon.ico, etc.
+          regex_match = "^(/[^.]*)*/?$"
+          header_matches {
+            header_name = "Accept"
+            # Covers text/markdown alone or with quality values (e.g. text/markdown;q=0.9)
+            regex_match = "(?i)(^|,\\s*)text/markdown"
+          }
+        }
+        url_redirect {
+          path_redirect          = "/llms.txt"
+          redirect_response_code = "FOUND"
+          strip_query            = true
+        }
+      }
+    }
+  }
+
   dynamic "test" {
     for_each = var.backend_type == "BUCKET" || var.backend_type == "EXTERNAL_URL" ? [1] : []
     content {
       host    = length(local.domain_names) > 0 ? local.domain_names[0] : "example.com"
       path    = "/"
-      service = var.backend_type == "BUCKET" ? google_compute_backend_bucket.cdn_backend[0].id : google_compute_backend_service.cdn_backend_external[0].id
+      service = local._backend_id
     }
   }
 }
