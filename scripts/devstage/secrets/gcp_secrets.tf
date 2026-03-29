@@ -1,5 +1,5 @@
 ##################################################
-## Secret Manager — Prod
+## Secret Manager — Dev
 ## Each secret stores a JSON object — see keys in comments.
 ##################################################
 
@@ -11,8 +11,8 @@ locals {
 module "secret_clerk" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-clerk-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-clerk-dev"
   read_principals = local._sa
 }
 
@@ -20,8 +20,8 @@ module "secret_clerk" {
 module "secret_db" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-db-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-db-dev"
   read_principals = local._sa
 }
 
@@ -29,8 +29,8 @@ module "secret_db" {
 module "secret_session" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-session-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-session-dev"
   read_principals = local._sa
 }
 
@@ -38,8 +38,8 @@ module "secret_session" {
 module "secret_aimodels" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-aimodels-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-aimodels-dev"
   read_principals = local._sa
 }
 
@@ -47,8 +47,8 @@ module "secret_aimodels" {
 module "secret_integrations" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-integrations-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-integrations-dev"
   read_principals = local._sa
 }
 
@@ -56,8 +56,8 @@ module "secret_integrations" {
 module "secret_daytona" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-daytona-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-daytona-dev"
   read_principals = local._sa
 }
 
@@ -65,7 +65,7 @@ module "secret_daytona" {
 module "secret_messaging" {
   source = "../../../modules/gcp_secret_manager"
   providers = { google = google }
-  project_id      = local.project_id
-  secret_id       = "secret-${local.project_folder_code}-messaging-prod"
+  project_id      = local.project_id_devstage
+  secret_id       = "secret-${local.project_folder_code}-messaging-dev"
   read_principals = local._sa
 }
