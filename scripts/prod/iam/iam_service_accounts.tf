@@ -8,7 +8,7 @@ module "sa_backend_apiserver" {
     google = google
   }
   project_id                   = local.project_id
-  service_account_name         = "sa-${local.project_folder_code}-backend-apiserver"
+  service_account_name         = "${local.project_folder_code}-backend-api-prod"
   service_account_display_name = "mktskills Backend API Server"
   service_account_description  = "Runtime service account for the backend Cloud Run service"
   roles = [

@@ -2,28 +2,6 @@
 ## CDN Websites — Web App (Astro + Vite SPA)
 ##################################################
 
-module "platform_web_app_dev" {
-  source = "../../../modules/gcp_cdn_website"
-  providers = {
-    google      = google
-    google-beta = google-beta
-  }
-  project_id = local.project_id
-
-  website_id              = "${local.project_folder_code}-webapp-website-dev"
-  bucket_location         = local.env_main_region
-  subdomains              = ["app-dev"]
-  full_domains            = ["app-dev.mktskills.ai"]
-  dns_managed_zone_name   = "dnszone-${local.project_folder_code}-mktskillsai"
-  dns_managed_zone_project_id = local.dns_zone_project_id
-
-  cdn_policy = {
-    max_ttl     = 60
-    default_ttl = 60
-    client_ttl  = 60
-  }
-}
-
 module "platform_web_app_prod" {
   source = "../../../modules/gcp_cdn_website"
   providers = {
@@ -34,22 +12,24 @@ module "platform_web_app_prod" {
 
   website_id              = "${local.project_folder_code}-webapp-website-prod"
   bucket_location         = local.env_main_region
-  subdomains              = ["app"]
-  full_domains            = ["mktskills.ai", "app.mktskills.ai"]
+  subdomains              = ["www"]
+  full_domains            = ["mktskills.ai", "www.mktskills.ai"]
   dns_managed_zone_name   = "dnszone-${local.project_folder_code}-mktskillsai"
   dns_managed_zone_project_id = local.dns_zone_project_id
 
-  enable_llm_discovery = true
+  # SPA fallback: LB intercepts 4xx from GCS and serves app/index.html with 200.
+  # This allows React Router (BrowserRouter) to handle virtual routes client-side.
+  spa_fallback_path = "/app/index.html"
+  not_found_page    = "404.html"
+
+  # LLM discovery (regex route rules) requires a backend service, not a backend bucket.
+  # Re-enable once the CDN origin is fronted by Cloud Run.
+  enable_llm_discovery = false
 
   cdn_policy = {
     max_ttl     = 3600
     default_ttl = 3600
     client_ttl  = 3600
-    # Include Accept in the cache key so CDN serves separate cached responses
-    # for text/markdown vs text/html requests (required for content negotiation).
-    cache_key_policy = [{
-      include_http_headers = ["Accept"]
-    }]
   }
 
   custom_response_headers = [
