@@ -147,3 +147,9 @@ variable "enable_llm_discovery" {
   default     = false
 }
 
+variable "spa_fallback_path" {
+  description = "When set, adds a custom error response policy to the HTTPS URL map that intercepts 4xx responses from the backend and serves this path with HTTP 200. Use for SPAs where virtual routes (e.g. /app/clients) must return index.html rather than a 404. Example: \"/app/index.html\"."
+  type        = string
+  default     = null
+}
+

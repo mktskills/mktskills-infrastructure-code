@@ -1,3 +1,8 @@
+output "v2_repo_id" {
+  description = "Full resource ID of the Cloud Build v2 repository. Pass as v2_repo_id to gcp_pipeline modules."
+  value       = var.github_owner != null ? google_cloudbuildv2_repository.github_repo[0].id : null
+}
+
 output "repository_name" {
   description = "The name of the newly created Google Cloud Repository."
   value       = var.repository_id != null ? google_sourcerepo_repository.repository[0].name : null

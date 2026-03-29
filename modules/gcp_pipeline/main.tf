@@ -1,4 +1,7 @@
 locals {
+  # v2 (repository_event_config) triggers require explicit logging; default to CLOUD_LOGGING_ONLY
+  effective_logging = var.repo_type == "GITHUB_V2" ? coalesce(var.logging, "CLOUD_LOGGING_ONLY") : var.logging
+
   custom_substitutions_as_env_vars = var.map_substitutions_to_env_vars ? [for k in keys(var.substitutions) : join("=$", [k, k])] : []
   base_substitutions_as_env_vars = var.map_base_substitutions_to_env_vars ? [
     "BUILDER_PROJECT_ID=$PROJECT_ID",
@@ -39,8 +42,29 @@ resource "google_cloudbuild_trigger" "repo_trigger" {
   dynamic "github" {
     for_each = var.repo_type == "GITHUB" ? [1] : []
     content {
-      name = split("/", var.repo_name)[1]
+      name  = split("/", var.repo_name)[1]
       owner = split("/", var.repo_name)[0]
+
+      dynamic "push" {
+        for_each = var.repo_trigger == "PUSH" ? [1] : []
+        content {
+          branch = var.repo_branch_regexp
+        }
+      }
+
+      dynamic "pull_request" {
+        for_each = var.repo_trigger == "PULL_REQUEST" ? [1] : []
+        content {
+          branch = var.repo_branch_regexp
+        }
+      }
+    }
+  }
+
+  dynamic "repository_event_config" {
+    for_each = var.repo_type == "GITHUB_V2" ? [1] : []
+    content {
+      repository = var.v2_repo_id
 
       dynamic "push" {
         for_each = var.repo_trigger == "PUSH" ? [1] : []
@@ -73,13 +97,13 @@ resource "google_cloudbuild_trigger" "repo_trigger" {
     }
 
     options {
-      substitution_option = "MUST_MATCH"
+      substitution_option = "ALLOW_LOOSE"
       env                 = concat(
         var.env_vars,
         local.base_substitutions_as_env_vars,
         local.custom_substitutions_as_env_vars
       )
-      logging             = var.logging
+      logging             = local.effective_logging
       machine_type        = var.machine_type
     }
   }
@@ -111,7 +135,10 @@ resource "google_service_account_iam_binding" "cloudbuild_service_account_user" 
   role               = "roles/iam.serviceAccountUser"
 
   members = [
-    "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+    # 1st gen Cloud Build P4SA
+    "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com",
+    # 2nd gen Cloud Build service agent (repository_event_config triggers)
+    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloudbuild.iam.gserviceaccount.com",
   ]
 }
 

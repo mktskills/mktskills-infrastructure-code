@@ -30,9 +30,15 @@ variable "service_account_id" {
 }
 
 variable "repo_type" {
-  description = "The type of repo to monitor (SOURCEREPO, GITHUB, etc.)"
+  description = "The type of repo to monitor (SOURCEREPO, GITHUB, GITHUB_V2)"
   type        = string
   default     = "SOURCEREPO"
+}
+
+variable "v2_repo_id" {
+  description = "Full resource ID of a Cloud Build v2 repository (projects/.../connections/.../repositories/...). Required when repo_type = GITHUB_V2."
+  type        = string
+  default     = null
 }
 
 variable "repo_name" {

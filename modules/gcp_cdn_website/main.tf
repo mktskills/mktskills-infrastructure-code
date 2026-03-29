@@ -1,3 +1,8 @@
+data "google_project" "project" {
+  provider   = google
+  project_id = var.project_id
+}
+
 locals {
   empty_cache_key_policy = {}
 
@@ -12,7 +17,7 @@ locals {
 resource "google_project_service" "compute" {
   provider = google
   project  = var.project_id
-  
+
   service = "compute.googleapis.com"
   disable_on_destroy = false
 }
@@ -22,8 +27,9 @@ resource "google_storage_bucket" "website_bucket" {
   project  = var.project_id
   count    = var.backend_type == "BUCKET" ? 1 : 0
 
-  name              = "csbuck-${var.website_id}"
-  location          = var.bucket_location
+  name                        = "csbuck-${var.website_id}"
+  location                    = var.bucket_location
+  uniform_bucket_level_access = true
 
   website {
     main_page_suffix = var.main_page
@@ -31,14 +37,10 @@ resource "google_storage_bucket" "website_bucket" {
   }
 }
 
-resource "google_storage_bucket_iam_member" "website_public_read" {
-  provider = google
-  count    = var.backend_type == "BUCKET" ? 1 : 0
-
-  bucket = google_storage_bucket.website_bucket[0].name
-  role   = "roles/storage.objectViewer"
-  member = "allUsers"
-}
+# Note: Cloud CDN has implicit read access to backend bucket objects in the same project.
+# The CDN fill SA (service-{number}@cloud-cdn-fill.iam.gserviceaccount.com) is auto-created
+# by Google on first CDN fetch — it cannot be pre-granted before it exists.
+# allUsers is intentionally omitted: org policy constraints/iam.allowedPolicyMemberDomains blocks it.
 
 resource "google_storage_bucket_iam_member" "bucket_editors" {
   provider = google
@@ -234,6 +236,40 @@ resource "google_compute_url_map" "cdn_map_https" {
   name            = "cptumaps-${var.website_id}"
   default_service = local._backend_id
 
+  # SPA fallback scoped to /app/** only — non-app paths (Astro routes) get real 404s.
+  # Requires EXTERNAL_MANAGED forwarding rule scheme.
+  # NOTE: cannot coexist with enable_llm_discovery host_rule (hosts=["*"] conflict).
+  # When both are needed, merge into a single path_matcher.
+  dynamic "host_rule" {
+    for_each = var.spa_fallback_path != null && !var.enable_llm_discovery ? [1] : []
+    content {
+      hosts        = ["*"]
+      path_matcher = "spa-routing"
+    }
+  }
+
+  dynamic "path_matcher" {
+    for_each = var.spa_fallback_path != null && !var.enable_llm_discovery ? [1] : []
+    content {
+      name            = "spa-routing"
+      default_service = local._backend_id
+
+      path_rule {
+        paths   = ["/app", "/app/*"]
+        service = local._backend_id
+
+        custom_error_response_policy {
+          error_service = local._backend_id
+          error_response_rule {
+            match_response_codes   = ["4xx"]
+            path                   = var.spa_fallback_path
+            override_response_code = 200
+          }
+        }
+      }
+    }
+  }
+
   dynamic "default_url_redirect" {
     for_each = var.backend_type != "BUCKET" && var.backend_type != "EXTERNAL_URL" ? [1] : []
     content {
@@ -269,7 +305,7 @@ resource "google_compute_url_map" "cdn_map_https" {
         match_rules {
           # Matches paths where every segment is dot-free: /, /features, /blog/post, …
           # Does NOT match /llms.txt, /ai.txt, /favicon.ico, etc.
-          regex_match = "^(/[^.]*)*/?$"
+          regex_match = "^(/[^./]+)*/?$"
           header_matches {
             header_name = "Accept"
             # Covers text/markdown alone or with quality values (e.g. text/markdown;q=0.9)
@@ -338,7 +374,7 @@ resource "google_compute_global_forwarding_rule" "cdn_forwarding_rule_https" {
   project  = var.project_id
 
   name                  = "cptfruls-${var.website_id}"
-  load_balancing_scheme = "EXTERNAL"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
   ip_address            = google_compute_global_address.cdn_ip.address
   ip_protocol           = "TCP"
   port_range            = "443"
@@ -350,7 +386,7 @@ resource "google_compute_global_forwarding_rule" "cdn_forwarding_rule_http" {
   project  = var.project_id
 
   name                  = "cptfrul-${var.website_id}"
-  load_balancing_scheme = "EXTERNAL"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
   ip_address            = google_compute_global_address.cdn_ip.address
   ip_protocol           = "TCP"
   port_range            = "80"
