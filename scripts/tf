@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Terraform wrapper — injects GCP credentials and forwards all arguments.
+# Run from infra/ root. First argument is the stack name.
+#
+# Usage:
+#   scripts/tf cross init
+#   scripts/tf prod plan
+#   scripts/tf devstage apply -target=module.devstage_cdn
+
+set -euo pipefail
+
+ACCOUNT="info@scidive.ai"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage: scripts/tf <stack> <terraform-command> [args...]"
+  echo "Stacks: cross | prod | devstage"
+  exit 1
+fi
+
+STACK="$1"; shift
+STACK_DIR="${SCRIPT_DIR}/${STACK}"
+
+if [[ ! -d "${STACK_DIR}" ]]; then
+  echo "Error: stack '${STACK}' not found at ${STACK_DIR}"
+  exit 1
+fi
+
+export GOOGLE_OAUTH_ACCESS_TOKEN
+GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token --account "${ACCOUNT}")
+
+exec terraform -chdir="${STACK_DIR}" "$@"
