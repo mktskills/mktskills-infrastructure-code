@@ -1,5 +1,14 @@
 # AGENTS.md — mktskills.ai Infrastructure
 
+This is the Terraform repo for mktskills.ai infrastructure.
+
+There is no separate CI/CD app layer here to document. This repo **is** the environment and deployment wiring.
+
+## Quick Reference
+
+- **Project structure:** [`./.agents/PROJECT_STRUCTURE.md`](./.agents/PROJECT_STRUCTURE.md)
+- **Git & PR conventions:** [`./.agents/GIT_PR_CONVENTIONS.md`](./.agents/GIT_PR_CONVENTIONS.md)
+
 ## Terraform Rules
 
 **Only run Terraform commands from a stack folder.**
@@ -55,3 +64,10 @@ scripts/tf devstage apply -target=module.devstage_cdn
 2. GitHub connection authorized in Cloud Build Console (one-time, manual)
 3. `terraform init` completed in the target stack folder
 4. `terraform plan` reviewed before `apply`
+
+## Practical Rules
+
+- Treat `scripts/cross/` as shared deployment plumbing, not “just another env”.
+- Treat `scripts/prod/` and `scripts/devstage/` as the runtime stacks.
+- If you change service names, branch triggers, Artifact Registry repos, or secret names, check the downstream impact on `backend/`, `web/`, and root docs.
+- Do not add environment claims to docs that are not backed by Terraform.
