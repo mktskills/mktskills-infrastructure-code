@@ -114,7 +114,7 @@ module "pipeline_web_app_prod" {
   pipeline_id        = "${local.project_folder_code}-webapp-code-prod"
   service_account_id = "cbld-${local.project_folder_code}-webapp-prod"
   env                = "prod"
-  description        = "CI/CD pipeline for mktskills web app — main branch"
+  description        = "CI/CD pipeline for mktskills web app — master branch"
   repo_type          = "GITHUB_V2"
   v2_repo_id         = local.web_app_repo_id
   repo_branch_regexp = "^master$"

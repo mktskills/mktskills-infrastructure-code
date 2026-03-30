@@ -1,5 +1,7 @@
 # AGENTS.md — mktskills.ai Infrastructure
 
+> `AGENTS.md` is the canonical file. `CLAUDE.md` is a symlink.
+
 This is the Terraform repo for mktskills.ai infrastructure.
 
 There is no separate CI/CD app layer here to document. This repo **is** the environment and deployment wiring.
@@ -15,8 +17,8 @@ There is no separate CI/CD app layer here to document. This repo **is** the envi
 
 Valid working directories:
 - `scripts/cross/` — shared CI/CD infrastructure (Artifact Registry, Cloud Build, DNS, IAM, Storage)
-- `scripts/prod/` — production runtime (Cloud Run, CDN, LB, IAM, secrets)
-- `scripts/devstage/` — dev runtime (mirrors prod, targets devstage project)
+- `scripts/prod/` — production runtime resources (CDN, LB, IAM, secrets); Cloud Run services are deployed here by Cloud Build pipelines defined in `cross`
+- `scripts/devstage/` — dev runtime resources (mirrors prod shape)
 
 Never run `terraform` from:
 - `modules/` — these are libraries, not stacks
@@ -68,6 +70,6 @@ scripts/tf devstage apply -target=module.devstage_cdn
 ## Practical Rules
 
 - Treat `scripts/cross/` as shared deployment plumbing, not “just another env”.
-- Treat `scripts/prod/` and `scripts/devstage/` as the runtime stacks.
+- Treat `scripts/prod/` and `scripts/devstage/` as the runtime stacks. Note: the `devstage` stack folder uses environment name `dev` internally (resource suffixes, branch triggers) — the naming split is intentional for future project separation.
 - If you change service names, branch triggers, Artifact Registry repos, or secret names, check the downstream impact on `backend/`, `web/`, and root docs.
 - Do not add environment claims to docs that are not backed by Terraform.
