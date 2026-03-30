@@ -24,6 +24,7 @@ variable "service_account_id" {
   default     = null
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   description = "Environment label for the pipeline (e.g. dev, prod)."
   type        = string

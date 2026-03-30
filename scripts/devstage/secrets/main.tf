@@ -7,7 +7,7 @@ variable "service_account_backend_apiserver_email" { type = string }
 locals {
   project_id_devstage                     = var.project_id
   project_folder_code                     = var.project_folder_code
-  env                                     = var.env
-  env_main_region                         = var.env_main_region
+  env                                     = var.env             #tflint-ignore: terraform_unused_declarations
+  env_main_region                         = var.env_main_region #tflint-ignore: terraform_unused_declarations
   service_account_backend_apiserver_email = var.service_account_backend_apiserver_email
 }

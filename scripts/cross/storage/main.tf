@@ -6,6 +6,6 @@ variable "env_main_region" { type = string }
 locals {
   project_id          = var.project_id
   project_folder_code = var.project_folder_code
-  env                 = var.env           #tflint-ignore: terraform_unused_declarations
+  env                 = var.env #tflint-ignore: terraform_unused_declarations
   env_main_region     = var.env_main_region
 }
