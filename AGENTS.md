@@ -4,11 +4,12 @@
 
 This is the Terraform repo for mktskills.ai infrastructure.
 
-There is no separate CI/CD app layer here to document. This repo **is** the environment and deployment wiring.
+This repo **is** the environment and deployment wiring.
 
 ## Quick Reference
 
 - **Project structure:** [`./.agents/PROJECT_STRUCTURE.md`](./.agents/PROJECT_STRUCTURE.md)
+- **CI/CD:** [`./.agents/CI_CD_STEPS.md`](./.agents/CI_CD_STEPS.md)
 - **Git & PR conventions:** [`./.agents/GIT_PR_CONVENTIONS.md`](./.agents/GIT_PR_CONVENTIONS.md)
 
 ## Terraform Rules
