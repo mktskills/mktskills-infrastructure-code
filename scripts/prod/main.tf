@@ -20,7 +20,6 @@ provider "google-beta" {
 ##################################################
 
 locals {
-  org_id              = "mktskills.ai"
   project_id          = "mktskills-prod"
   project_folder_code = "mktskills"
   env                 = "prod"

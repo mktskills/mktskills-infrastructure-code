@@ -6,19 +6,19 @@
 
 locals {
   prod_apis = toset([
-    "run.googleapis.com",              # Cloud Run (backend API server)
-    "compute.googleapis.com",          # Compute (LB, CDN, SSL, IPs)
-    "secretmanager.googleapis.com",    # Secret Manager (credentials store)
-    "iam.googleapis.com",              # Service account management
-    "iamcredentials.googleapis.com",   # SA impersonation / workload identity
-    "iap.googleapis.com",              # OAuth consent screen
-    "people.googleapis.com",           # Google user info (OAuth)
-    "googleads.googleapis.com",        # Google Ads API
-    "analyticsadmin.googleapis.com",   # GA4 Admin API
-    "analyticsdata.googleapis.com",    # GA4 Data API
-    "logging.googleapis.com",          # Cloud Logging
-    "monitoring.googleapis.com",       # Cloud Monitoring
-    "cloudtrace.googleapis.com",       # Cloud Trace
+    "run.googleapis.com",            # Cloud Run (backend API server)
+    "compute.googleapis.com",        # Compute (LB, CDN, SSL, IPs)
+    "secretmanager.googleapis.com",  # Secret Manager (credentials store)
+    "iam.googleapis.com",            # Service account management
+    "iamcredentials.googleapis.com", # SA impersonation / workload identity
+    "iap.googleapis.com",            # OAuth consent screen
+    "people.googleapis.com",         # Google user info (OAuth)
+    "googleads.googleapis.com",      # Google Ads API
+    "analyticsadmin.googleapis.com", # GA4 Admin API
+    "analyticsdata.googleapis.com",  # GA4 Data API
+    "logging.googleapis.com",        # Cloud Logging
+    "monitoring.googleapis.com",     # Cloud Monitoring
+    "cloudtrace.googleapis.com",     # Cloud Trace
   ])
 }
 

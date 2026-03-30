@@ -27,9 +27,9 @@ resource "google_project_iam_member" "role_member" {
   for_each = toset(var.roles)
   project  = var.project_id
 
-  role    = each.value
+  role = each.value
 
-  member  = "serviceAccount:${google_service_account.service_account.email}"
+  member = "serviceAccount:${google_service_account.service_account.email}"
 }
 
 resource "google_project_iam_member" "foreign_role_member" {
@@ -37,15 +37,11 @@ resource "google_project_iam_member" "foreign_role_member" {
   for_each = local.foreign_project_roles_set
   project  = each.value.project_id
 
-  role    = each.value.role
+  role = each.value.role
 
-  member  = "serviceAccount:${google_service_account.service_account.email}"
+  member = "serviceAccount:${google_service_account.service_account.email}"
 }
 
-data "google_project" "project" {
-  provider   = google
-  project_id = var.project_id
-}
 resource "google_project_iam_custom_role" "custom_role" {
   provider = google
   count    = length(var.policies) > 0 ? 1 : 0
@@ -61,8 +57,8 @@ resource "google_project_iam_member" "custom_role_member" {
   provider = google
   count    = length(var.policies) > 0 ? 1 : 0
   project  = var.project_id
-  
-  role    = "projects/${var.project_id}/roles/${google_project_iam_custom_role.custom_role[0].role_id}"
+
+  role = "projects/${var.project_id}/roles/${google_project_iam_custom_role.custom_role[0].role_id}"
 
   member = "serviceAccount:${google_service_account.service_account.email}"
 }
@@ -79,7 +75,7 @@ resource "google_service_account_iam_member" "service_account_user" {
 
 resource "google_service_account_iam_member" "service_account_token_creator" {
   provider = google
-  count = length(var.members_token_creator)
+  count    = length(var.members_token_creator)
 
   service_account_id = google_service_account.service_account.name
   role               = "roles/iam.serviceAccountTokenCreator"

@@ -81,7 +81,7 @@ module "pipeline_web_app_dev" {
   deploy_project_id  = local.project_id_devstage
   build_policies = [{
     role = "roles/logging.logWriter"
-  }, {
+    }, {
     role       = "roles/storage.objectAdmin"
     expression = "resource.name.startsWith(\"projects/_/buckets/csbuck-${local.project_folder_code}-webapp-artifacts-cross\")"
   }]
@@ -122,7 +122,7 @@ module "pipeline_web_app_prod" {
   deploy_project_id  = local.project_id_prod
   build_policies = [{
     role = "roles/logging.logWriter"
-  }, {
+    }, {
     role       = "roles/storage.objectAdmin"
     expression = "resource.name.startsWith(\"projects/_/buckets/csbuck-${local.project_folder_code}-webapp-artifacts-cross\")"
   }]

@@ -12,8 +12,8 @@ module "bucket_webapp_artifacts" {
   bucket_name = "${local.project_folder_code}-webapp-artifacts-cross"
   location    = local.env_main_region
   lifecycle_rules = [{
-    action_type    = "Delete"
-    condition_age  = 30
+    action_type   = "Delete"
+    condition_age = 30
   }]
 }
 

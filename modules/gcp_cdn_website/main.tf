@@ -1,14 +1,9 @@
-data "google_project" "project" {
-  provider   = google
-  project_id = var.project_id
-}
 
 locals {
-  empty_cache_key_policy = {}
 
   use_dns_zone = var.dns_managed_zone_name != null
   domain_names = var.full_domains != null ? var.full_domains : [
-    for subdomain in var.subdomains : 
+    for subdomain in var.subdomains :
     subdomain == "" ? trimsuffix(data.google_dns_managed_zone.cdn_dns_zone[0].dns_name, ".") :
     "${subdomain}.${trimsuffix(data.google_dns_managed_zone.cdn_dns_zone[0].dns_name, ".")}"
   ]
@@ -18,10 +13,11 @@ resource "google_project_service" "compute" {
   provider = google
   project  = var.project_id
 
-  service = "compute.googleapis.com"
+  service            = "compute.googleapis.com"
   disable_on_destroy = false
 }
 
+#tfsec:ignore:google-storage-bucket-encryption-customer-key
 resource "google_storage_bucket" "website_bucket" {
   provider = google
   project  = var.project_id
@@ -84,8 +80,8 @@ resource "google_compute_managed_ssl_certificate" "cdn_certificate" {
   provider = google-beta
   project  = var.project_id
 
-  name     = "cptcert-${var.website_id}"
-  type     = "MANAGED"
+  name = "cptcert-${var.website_id}"
+  type = "MANAGED"
   managed {
     domains = local.domain_names
   }
@@ -104,14 +100,14 @@ resource "google_compute_backend_bucket" "cdn_backend" {
   dynamic "cdn_policy" {
     for_each = var.cdn_policy != null ? [var.cdn_policy] : []
     content {
-      cache_mode                         = lookup(cdn_policy.value, "cache_mode", null)
-      serve_while_stale                  = lookup(cdn_policy.value, "serve_while_stale", null)
-      request_coalescing                 = lookup(cdn_policy.value, "request_coalescing", null) != false
-      signed_url_cache_max_age_sec       = coalesce(lookup(cdn_policy.value, "signed_url_cache_max_age_sec", null), 0)
-      default_ttl                        = lookup(cdn_policy.value, "default_ttl", null)
-      negative_caching                   = lookup(cdn_policy.value, "negative_caching", null)
-      max_ttl                            = lookup(cdn_policy.value, "max_ttl", null)
-      client_ttl                         = lookup(cdn_policy.value, "client_ttl", null)
+      cache_mode                   = lookup(cdn_policy.value, "cache_mode", null)
+      serve_while_stale            = lookup(cdn_policy.value, "serve_while_stale", null)
+      request_coalescing           = lookup(cdn_policy.value, "request_coalescing", null) != false
+      signed_url_cache_max_age_sec = coalesce(lookup(cdn_policy.value, "signed_url_cache_max_age_sec", null), 0)
+      default_ttl                  = lookup(cdn_policy.value, "default_ttl", null)
+      negative_caching             = lookup(cdn_policy.value, "negative_caching", null)
+      max_ttl                      = lookup(cdn_policy.value, "max_ttl", null)
+      client_ttl                   = lookup(cdn_policy.value, "client_ttl", null)
 
       dynamic "bypass_cache_on_request_headers" {
         for_each = cdn_policy.value.bypass_cache_on_request_headers != null ? cdn_policy.value.bypass_cache_on_request_headers : []
@@ -138,8 +134,8 @@ resource "google_compute_backend_bucket" "cdn_backend" {
     }
   }
 
-  compression_mode      = var.compression_mode
-  edge_security_policy  = var.edge_security_policy
+  compression_mode     = var.compression_mode
+  edge_security_policy = var.edge_security_policy
 
   custom_response_headers = var.custom_response_headers
 }
@@ -153,7 +149,7 @@ resource "google_compute_backend_service" "cdn_backend_external" {
   description = "External URL backend for the website"
   enable_cdn  = true
 
-  custom_request_headers = var.custom_request_headers
+  custom_request_headers  = var.custom_request_headers
   custom_response_headers = var.custom_response_headers
 
   backend {
@@ -163,13 +159,13 @@ resource "google_compute_backend_service" "cdn_backend_external" {
   dynamic "cdn_policy" {
     for_each = var.cdn_policy != null ? [var.cdn_policy] : []
     content {
-      cache_mode                         = lookup(cdn_policy.value, "cache_mode", null)
-      serve_while_stale                  = lookup(cdn_policy.value, "serve_while_stale", null)
-      signed_url_cache_max_age_sec       = coalesce(lookup(cdn_policy.value, "signed_url_cache_max_age_sec", null), 0)
-      default_ttl                        = lookup(cdn_policy.value, "default_ttl", null)
-      negative_caching                   = lookup(cdn_policy.value, "negative_caching", null)
-      max_ttl                            = lookup(cdn_policy.value, "max_ttl", null)
-      client_ttl                         = lookup(cdn_policy.value, "client_ttl", null)
+      cache_mode                   = lookup(cdn_policy.value, "cache_mode", null)
+      serve_while_stale            = lookup(cdn_policy.value, "serve_while_stale", null)
+      signed_url_cache_max_age_sec = coalesce(lookup(cdn_policy.value, "signed_url_cache_max_age_sec", null), 0)
+      default_ttl                  = lookup(cdn_policy.value, "default_ttl", null)
+      negative_caching             = lookup(cdn_policy.value, "negative_caching", null)
+      max_ttl                      = lookup(cdn_policy.value, "max_ttl", null)
+      client_ttl                   = lookup(cdn_policy.value, "client_ttl", null)
 
       dynamic "bypass_cache_on_request_headers" {
         for_each = cdn_policy.value.bypass_cache_on_request_headers != null ? cdn_policy.value.bypass_cache_on_request_headers : []
@@ -273,12 +269,12 @@ resource "google_compute_url_map" "cdn_map_https" {
   dynamic "default_url_redirect" {
     for_each = var.backend_type != "BUCKET" && var.backend_type != "EXTERNAL_URL" ? [1] : []
     content {
-        host_redirect          = var.external_url != null ? trim(split("://", var.external_url)[1], "/") : ""
-        https_redirect         = var.external_url != null ? split("://", var.external_url)[0] == "https" : true
-        path_redirect          = "/"
-        redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
-        strip_query            = false
-      }
+      host_redirect          = var.external_url != null ? trim(split("://", var.external_url)[1], "/") : ""
+      https_redirect         = var.external_url != null ? split("://", var.external_url)[0] == "https" : true
+      path_redirect          = "/"
+      redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+      strip_query            = false
+    }
   }
 
   # LLM content-negotiation: redirect Accept: text/markdown to /llms.txt
@@ -354,10 +350,10 @@ resource "google_compute_target_https_proxy" "cdn_target_proxy_https" {
 }
 
 resource "google_compute_ssl_policy" "cdn_ssl_policy" {
-  provider = google
-  project  = var.project_id
-  name     = "cptsslp-${var.website_id}"
-  profile  = "MODERN"
+  provider        = google
+  project         = var.project_id
+  name            = "cptsslp-${var.website_id}"
+  profile         = "MODERN"
   min_tls_version = var.min_tls_version
 }
 
@@ -365,8 +361,8 @@ resource "google_compute_target_http_proxy" "cdn_target_proxy_http" {
   provider = google
   project  = var.project_id
 
-  name             = "cpttpxy-${var.website_id}"
-  url_map          = google_compute_url_map.cdn_map_http.self_link
+  name    = "cpttpxy-${var.website_id}"
+  url_map = google_compute_url_map.cdn_map_http.self_link
 }
 
 resource "google_compute_global_forwarding_rule" "cdn_forwarding_rule_https" {

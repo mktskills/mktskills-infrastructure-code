@@ -20,12 +20,11 @@ provider "google-beta" {
 ##################################################
 
 locals {
-  org_id              = "mktskills.ai"
-  project_id_devstage = "mktskills-prod"  # Will become mktskills-devstage when projects are split
+  project_id_devstage = "mktskills-prod" # Will become mktskills-devstage when projects are split
   project_folder_code = "mktskills"
   env                 = "dev"
   env_main_region     = "us-central1"
-  dns_zone_project_id = "mktskills-prod"  # DNS zone lives in the cross/prod project
+  dns_zone_project_id = "mktskills-prod" # DNS zone lives in the cross/prod project
 }
 
 ##################################################

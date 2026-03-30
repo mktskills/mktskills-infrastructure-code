@@ -1,9 +1,11 @@
 variable "project_id" {
   description = "The project ID where the secret will be created"
+  type        = string
 }
 
 variable "secret_id" {
   description = "The ID of the secret to create"
+  type        = string
 }
 
 variable "secret_data" {

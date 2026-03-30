@@ -77,7 +77,7 @@ module "pipeline_backend_dev" {
   repo_name          = "mktskills/mktskills-backend-app"
   build_policies = [{
     role = "roles/logging.logWriter"
-  }, {
+    }, {
     role       = "roles/artifactregistry.writer"
     expression = "resource.name.startsWith(\"projects/${local.project_id_cross}/locations/${local.env_main_region}/repositories/${local.backend_artifacts_repo}\")"
   }]
@@ -92,21 +92,21 @@ module "pipeline_backend_dev" {
     local.backend_deploy_step,
   ]
   substitutions = {
-    _IMAGE_NAME           = "mktskills-backend-api"
-    _ENV                  = "dev"
-    _DEPLOY_PROJECT_ID    = local.project_id_devstage
-    _SERVICE_NAME         = "crunserv-${local.project_folder_code}-backend-api-dev"
-    _SERVICE_ACCOUNT      = "${local.project_folder_code}-backend-api-dev@${local.project_id_devstage}.iam.gserviceaccount.com"
-    _CLOUDRUN_MEMORY      = "512Mi"
-    _CLOUDRUN_VCPU        = "1"
+    _IMAGE_NAME             = "mktskills-backend-api"
+    _ENV                    = "dev"
+    _DEPLOY_PROJECT_ID      = local.project_id_devstage
+    _SERVICE_NAME           = "crunserv-${local.project_folder_code}-backend-api-dev"
+    _SERVICE_ACCOUNT        = "${local.project_folder_code}-backend-api-dev@${local.project_id_devstage}.iam.gserviceaccount.com"
+    _CLOUDRUN_MEMORY        = "512Mi"
+    _CLOUDRUN_VCPU          = "1"
     _CLOUDRUN_MIN_INSTANCES = "0"
     _CLOUDRUN_MAX_INSTANCES = "3"
-    _FRONTEND_URL         = "https://www-o8styhv7948sg53i.mktskills.ai"
-    _API_BASE_URL         = "https://api-o8styhv7948sg53i.mktskills.ai"
-    _CORS_ORIGINS         = jsonencode(["https://www-o8styhv7948sg53i.mktskills.ai"])
-    _DEBUG                = "false"
+    _FRONTEND_URL           = "https://www-o8styhv7948sg53i.mktskills.ai"
+    _API_BASE_URL           = "https://api-o8styhv7948sg53i.mktskills.ai"
+    _CORS_ORIGINS           = jsonencode(["https://www-o8styhv7948sg53i.mktskills.ai"])
+    _DEBUG                  = "false"
   }
-  env_vars = []
+  env_vars     = []
   timeout      = "900s"
   machine_type = "E2_HIGHCPU_8"
 }
@@ -130,7 +130,7 @@ module "pipeline_backend_prod" {
   repo_name          = "mktskills/mktskills-backend-app"
   build_policies = [{
     role = "roles/logging.logWriter"
-  }, {
+    }, {
     role       = "roles/artifactregistry.writer"
     expression = "resource.name.startsWith(\"projects/${local.project_id_cross}/locations/${local.env_main_region}/repositories/${local.backend_artifacts_repo}\")"
   }]
@@ -145,21 +145,21 @@ module "pipeline_backend_prod" {
     local.backend_deploy_step,
   ]
   substitutions = {
-    _IMAGE_NAME           = "mktskills-backend-api"
-    _ENV                  = "prod"
-    _DEPLOY_PROJECT_ID    = local.project_id_prod
-    _SERVICE_NAME         = "crunserv-${local.project_folder_code}-backend-api-prod"
-    _SERVICE_ACCOUNT      = "${local.project_folder_code}-backend-api-prod@${local.project_id_prod}.iam.gserviceaccount.com"
-    _CLOUDRUN_MEMORY      = "1Gi"
-    _CLOUDRUN_VCPU        = "1"
+    _IMAGE_NAME             = "mktskills-backend-api"
+    _ENV                    = "prod"
+    _DEPLOY_PROJECT_ID      = local.project_id_prod
+    _SERVICE_NAME           = "crunserv-${local.project_folder_code}-backend-api-prod"
+    _SERVICE_ACCOUNT        = "${local.project_folder_code}-backend-api-prod@${local.project_id_prod}.iam.gserviceaccount.com"
+    _CLOUDRUN_MEMORY        = "1Gi"
+    _CLOUDRUN_VCPU          = "1"
     _CLOUDRUN_MIN_INSTANCES = "1"
     _CLOUDRUN_MAX_INSTANCES = "10"
-    _FRONTEND_URL         = "https://www.mktskills.ai"
-    _API_BASE_URL         = "https://api.mktskills.ai"
-    _CORS_ORIGINS         = jsonencode(["https://www.mktskills.ai"])
-    _DEBUG                = "false"
+    _FRONTEND_URL           = "https://www.mktskills.ai"
+    _API_BASE_URL           = "https://api.mktskills.ai"
+    _CORS_ORIGINS           = jsonencode(["https://www.mktskills.ai"])
+    _DEBUG                  = "false"
   }
-  env_vars = []
+  env_vars     = []
   timeout      = "900s"
   machine_type = "E2_HIGHCPU_8"
 }

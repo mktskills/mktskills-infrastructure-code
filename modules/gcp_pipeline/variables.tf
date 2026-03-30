@@ -13,11 +13,6 @@ variable "pipeline_id" {
   type        = string
 }
 
-variable "env" {
-  description = "The environment for the application deployment (e.g. dev, stage, prod)."
-  type        = string
-}
-
 variable "description" {
   description = "The description of the Cloud Build trigger."
   type        = string

@@ -11,9 +11,9 @@ module "repo_web_app" {
   providers = {
     google = google
   }
-  project_id  = local.project_id
-  location    = local.env_main_region
-  repo_name   = "mktskills-web-app"
+  project_id             = local.project_id
+  location               = local.env_main_region
+  repo_name              = "mktskills-web-app"
   github_owner           = "mktskills"
   github_repo            = "mktskills-web-app"
   github_connection_name = local.github_connection_name
@@ -24,9 +24,9 @@ module "repo_backend_app" {
   providers = {
     google = google
   }
-  project_id  = local.project_id
-  location    = local.env_main_region
-  repo_name   = "mktskills-backend-app"
+  project_id             = local.project_id
+  location               = local.env_main_region
+  repo_name              = "mktskills-backend-app"
   github_owner           = "mktskills"
   github_repo            = "mktskills-backend-app"
   github_connection_name = local.github_connection_name

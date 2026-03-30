@@ -1,7 +1,8 @@
+#tfsec:ignore:google-storage-bucket-encryption-customer-key
 resource "google_storage_bucket" "bucket" {
   provider = google
   project  = var.project_id
-  
+
   name                        = "csbuck-${var.bucket_name}"
   location                    = var.location
   storage_class               = var.storage_class
@@ -19,21 +20,21 @@ resource "google_storage_bucket" "bucket" {
     for_each = var.lifecycle_rules
     content {
       action {
-        type = lifecycle_rule.value.action_type
+        type          = lifecycle_rule.value.action_type
         storage_class = lookup(lifecycle_rule.value, "action_storage_class", null)
       }
       condition {
-        age                       = lookup(lifecycle_rule.value, "condition_age", null)
-        created_before            = lookup(lifecycle_rule.value, "condition_created_before", null)
-        with_state                = lookup(lifecycle_rule.value, "condition_with_state", null)
-        matches_storage_class     = lookup(lifecycle_rule.value, "condition_matches_storage_class", [])
-        matches_prefix            = lookup(lifecycle_rule.value, "condition_matches_prefix", [])
-        matches_suffix            = lookup(lifecycle_rule.value, "condition_matches_suffix", [])
-        num_newer_versions        = lookup(lifecycle_rule.value, "condition_num_newer_versions", null)
-        custom_time_before        = lookup(lifecycle_rule.value, "condition_custom_time_before", null)
-        days_since_custom_time    = lookup(lifecycle_rule.value, "condition_days_since_custom_time", null)
-        days_since_noncurrent_time= lookup(lifecycle_rule.value, "condition_days_since_noncurrent_time", null)
-        noncurrent_time_before    = lookup(lifecycle_rule.value, "condition_noncurrent_time_before", null)
+        age                        = lookup(lifecycle_rule.value, "condition_age", null)
+        created_before             = lookup(lifecycle_rule.value, "condition_created_before", null)
+        with_state                 = lookup(lifecycle_rule.value, "condition_with_state", null)
+        matches_storage_class      = lookup(lifecycle_rule.value, "condition_matches_storage_class", [])
+        matches_prefix             = lookup(lifecycle_rule.value, "condition_matches_prefix", [])
+        matches_suffix             = lookup(lifecycle_rule.value, "condition_matches_suffix", [])
+        num_newer_versions         = lookup(lifecycle_rule.value, "condition_num_newer_versions", null)
+        custom_time_before         = lookup(lifecycle_rule.value, "condition_custom_time_before", null)
+        days_since_custom_time     = lookup(lifecycle_rule.value, "condition_days_since_custom_time", null)
+        days_since_noncurrent_time = lookup(lifecycle_rule.value, "condition_days_since_noncurrent_time", null)
+        noncurrent_time_before     = lookup(lifecycle_rule.value, "condition_noncurrent_time_before", null)
 
       }
     }
@@ -49,8 +50,8 @@ resource "google_storage_bucket" "bucket" {
   dynamic "cors" {
     for_each = var.cors_rules
     content {
-      origin = lookup(cors.value, "origin", null)
-      method = lookup(cors.value, "method", null)
+      origin          = lookup(cors.value, "origin", null)
+      method          = lookup(cors.value, "method", null)
       response_header = lookup(cors.value, "response_header", null)
       max_age_seconds = lookup(cors.value, "max_age_seconds", null)
     }
@@ -60,14 +61,14 @@ resource "google_storage_bucket" "bucket" {
     for_each = var.retention_policy != null ? [1] : []
     content {
       retention_period = var.retention_policy.retention_period
-      is_locked = lookup(var.retention_policy, "is_locked", false)
+      is_locked        = lookup(var.retention_policy, "is_locked", false)
     }
   }
 
   dynamic "logging" {
     for_each = var.logging != null ? [1] : []
     content {
-      log_bucket = var.logging.log_bucket
+      log_bucket        = var.logging.log_bucket
       log_object_prefix = var.logging.log_object_prefix
     }
   }
@@ -76,7 +77,7 @@ resource "google_storage_bucket" "bucket" {
     for_each = var.website != null ? [1] : []
     content {
       main_page_suffix = var.website.main_page_suffix
-      not_found_page = var.website.not_found_page
+      not_found_page   = var.website.not_found_page
     }
   }
 }

@@ -26,11 +26,11 @@ variable "roles" {
 
 variable "foreign_project_roles" {
   description = "The roles to be assigned to the service account in a foreign project."
-  type        = list(object({
+  type = list(object({
     project_id = string
     roles      = list(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "policies" {

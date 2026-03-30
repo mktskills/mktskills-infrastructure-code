@@ -34,22 +34,22 @@ variable "versioning" {
 
 variable "lifecycle_rules" {
   description = "The list lifecycle rules for the bucket"
-  type        = list(object({
-    action_type                        = string
-    action_storage_class               = optional(string)
-    condition_age                      = optional(number)
-    condition_created_before           = optional(string)
-    condition_with_state               = optional(string)
-    condition_matches_storage_class    = optional(list(string), [])
-    condition_matches_prefix           = optional(list(string), [])
-    condition_matches_suffix           = optional(list(string), [])
-    condition_num_newer_versions       = optional(number)
-    condition_custom_time_before       = optional(string)
-    condition_days_since_custom_time   = optional(number)
+  type = list(object({
+    action_type                          = string
+    action_storage_class                 = optional(string)
+    condition_age                        = optional(number)
+    condition_created_before             = optional(string)
+    condition_with_state                 = optional(string)
+    condition_matches_storage_class      = optional(list(string), [])
+    condition_matches_prefix             = optional(list(string), [])
+    condition_matches_suffix             = optional(list(string), [])
+    condition_num_newer_versions         = optional(number)
+    condition_custom_time_before         = optional(string)
+    condition_days_since_custom_time     = optional(number)
     condition_days_since_noncurrent_time = optional(number)
-    condition_noncurrent_time_before   = optional(string)
+    condition_noncurrent_time_before     = optional(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "default_kms_key_name" {
@@ -60,40 +60,40 @@ variable "default_kms_key_name" {
 
 variable "cors_rules" {
   description = "The CORS configuration rules for the bucket"
-  type        = list(object({
-    origin = list(string)
-    method = list(string)
+  type = list(object({
+    origin          = list(string)
+    method          = list(string)
     response_header = list(string)
     max_age_seconds = number
   }))
-  default     = []
+  default = []
 }
 
 variable "retention_policy" {
   description = "The retention policy configuration of the bucket"
-  type        = object({
-    retention_period  = number
-    is_locked         = bool
+  type = object({
+    retention_period = number
+    is_locked        = bool
   })
-  default     = null
+  default = null
 }
 
 variable "logging" {
   description = "The logging configuration of the bucket"
-  type        = object({
-    log_bucket         = string
-    log_object_prefix  = string
+  type = object({
+    log_bucket        = string
+    log_object_prefix = string
   })
-  default     = null
+  default = null
 }
 
 variable "website" {
   description = "The website configuration of the bucket"
-  type        = object({
+  type = object({
     main_page_suffix = string
     not_found_page   = string
   })
-  default     = null
+  default = null
 }
 
 variable "public_read_access" {

@@ -39,12 +39,6 @@ variable "dns_managed_zone_project_id" {
   default     = null
 }
 
-variable "cdn_proxy_header" {
-  description = "The HTTP header name used to pass the client's original IP address."
-  type        = string
-  default     = "X-Forwarded-For"
-}
-
 variable "main_page" {
   description = "Path to main page loaded when browsing root path"
   type        = string
@@ -59,58 +53,58 @@ variable "not_found_page" {
 
 variable "cdn_policy" {
   description = "Cloud CDN configuration for this Backend Bucket."
-  type        = object({
-    cache_mode                         = optional(string)
-    serve_while_stale                  = optional(number)
-    request_coalescing                 = optional(any)
-    bypass_cache_on_request_headers    = optional(list(object({
-          header_name = string
-        })))
-    cache_key_policy                   = optional(list(object({
-          query_string_whitelist = optional(list(string))
-          include_http_headers   = optional(list(string))
-        })))
-    signed_url_cache_max_age_sec       = optional(number)
-    negative_caching                   = optional(bool)
-    negative_caching_policy            = optional(list(object({
-          code = optional(number)
-          ttl  = optional(number)
-        })))
-    max_ttl                            = optional(number)
-    default_ttl                        = optional(number)
-    client_ttl                         = optional(number)
+  type = object({
+    cache_mode         = optional(string)
+    serve_while_stale  = optional(number)
+    request_coalescing = optional(any)
+    bypass_cache_on_request_headers = optional(list(object({
+      header_name = string
+    })))
+    cache_key_policy = optional(list(object({
+      query_string_whitelist = optional(list(string))
+      include_http_headers   = optional(list(string))
+    })))
+    signed_url_cache_max_age_sec = optional(number)
+    negative_caching             = optional(bool)
+    negative_caching_policy = optional(list(object({
+      code = optional(number)
+      ttl  = optional(number)
+    })))
+    max_ttl     = optional(number)
+    default_ttl = optional(number)
+    client_ttl  = optional(number)
   })
-  default     = null
+  default = null
 }
 
 variable "compression_mode" {
   description = "Compress text responses using Brotli or gzip compression, based on the client's Accept-Encoding header. Possible values are AUTOMATIC and DISABLED."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "edge_security_policy" {
   description = "The security policy associated with this backend bucket."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "custom_request_headers" {
   description = "A list of custom request headers to be added to the CDN configuration. Only used when backend_type is 'EXTERNAL_URL'."
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "custom_response_headers" {
   description = "A list of custom response headers to be added to the CDN configuration."
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "min_tls_version" {
   description = "The minimum TLS version to support for HTTPS connections."
-  type = string
-  default = "TLS_1_2"  
+  type        = string
+  default     = "TLS_1_2"
 }
 
 variable "custom_ssl_certificate" {

@@ -1,8 +1,8 @@
 resource "google_project_service" "compute" {
   provider = google
   project  = var.project_id
-  
-  service = "compute.googleapis.com"
+
+  service            = "compute.googleapis.com"
   disable_on_destroy = false
 }
 
@@ -38,8 +38,8 @@ resource "google_compute_managed_ssl_certificate" "lb_certificate" {
   provider = google-beta
   project  = var.project_id
 
-  name     = "cptcert-${var.backend_id}"
-  type     = "MANAGED"
+  name = "cptcert-${var.backend_id}"
+  type = "MANAGED"
   managed {
     domains = [for dns_record in google_dns_record_set.lb_dns_records : dns_record.name]
   }
@@ -48,7 +48,7 @@ resource "google_compute_managed_ssl_certificate" "lb_certificate" {
 resource "google_compute_region_network_endpoint_group" "lb_serverless_neg" {
   provider = google-beta
   project  = var.project_id
-  for_each = { for serverless_backend in var.serverless_backends: "${serverless_backend.name}-${serverless_backend.region}" => serverless_backend }
+  for_each = { for serverless_backend in var.serverless_backends : "${serverless_backend.name}-${serverless_backend.region}" => serverless_backend }
 
   name                  = "cptneg-${each.value.name}"
   network_endpoint_type = "SERVERLESS"
@@ -75,7 +75,7 @@ resource "google_compute_region_network_endpoint_group" "lb_serverless_neg" {
       version = each.value.appengine_version_id
     }
   }
-  
+
   lifecycle {
     create_before_destroy = true
   }
@@ -95,8 +95,8 @@ resource "google_compute_health_check" "lb_health_check" {
   }
 
   check_interval_sec  = var.health_check_interval_sec
-  timeout_sec        = var.health_check_timeout_sec
-  healthy_threshold  = var.health_check_healthy_threshold
+  timeout_sec         = var.health_check_timeout_sec
+  healthy_threshold   = var.health_check_healthy_threshold
   unhealthy_threshold = var.health_check_unhealthy_threshold
 }
 
@@ -104,20 +104,20 @@ resource "google_compute_backend_service" "lb_backend" {
   provider = google
   project  = var.project_id
 
-  name          = "cptback-${var.backend_id}"
-  protocol      = "HTTPS"
+  name     = "cptback-${var.backend_id}"
+  protocol = "HTTPS"
 
   dynamic "backend" {
     for_each = {
       for k, v in google_compute_region_network_endpoint_group.lb_serverless_neg : k => v
-    } 
+    }
     content {
       group = backend.value.id
     }
   }
 
   security_policy = var.security_policy
-  
+
   health_checks = var.enable_health_check ? [google_compute_health_check.lb_health_check[0].id] : null
 }
 
@@ -145,8 +145,8 @@ resource "google_compute_url_map" "lb_map_https" {
   }
 
   test {
-    host = length(var.subdomains) > 0 ? "${var.subdomains[0]}.${trimsuffix(data.google_dns_managed_zone.lb_dns_zone.dns_name, ".")}" : "example.com"
-    path = "/"
+    host    = length(var.subdomains) > 0 ? "${var.subdomains[0]}.${trimsuffix(data.google_dns_managed_zone.lb_dns_zone.dns_name, ".")}" : "example.com"
+    path    = "/"
     service = google_compute_backend_service.lb_backend.id
   }
 }

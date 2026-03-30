@@ -28,12 +28,12 @@ variable "dns_managed_zone_project_id" {
 variable "serverless_backends" {
   description = "The list of regional backends for serverless services such as Cloud Functions, Cloud Run or App Engine"
   type = list(object({
-    name                  = string
-    region                = string
-    cloud_function_name   = optional(string)
-    cloud_run_name        = optional(string)
-    appengine_service     = optional(string)
-    appengine_version_id  = optional(string)    
+    name                 = string
+    region               = string
+    cloud_function_name  = optional(string)
+    cloud_run_name       = optional(string)
+    appengine_service    = optional(string)
+    appengine_version_id = optional(string)
   }))
 }
 
@@ -45,8 +45,8 @@ variable "security_policy" {
 
 variable "min_tls_version" {
   description = "The minimum TLS version to support for HTTPS connections."
-  type = string
-  default = "TLS_1_2"  
+  type        = string
+  default     = "TLS_1_2"
 }
 
 variable "enable_health_check" {

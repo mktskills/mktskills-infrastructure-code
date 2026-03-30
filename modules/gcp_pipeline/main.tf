@@ -84,31 +84,31 @@ resource "google_cloudbuild_trigger" "repo_trigger" {
 
   build {
     substitutions = var.substitutions
-    timeout = var.timeout
+    timeout       = var.timeout
 
     dynamic "step" {
       for_each = var.steps
       content {
-        name = step.value.name
-        args = lookup(step.value, "args", null)
+        name       = step.value.name
+        args       = lookup(step.value, "args", null)
         entrypoint = lookup(step.value, "entrypoint", null)
-        script = lookup(step.value, "script", null)
+        script     = lookup(step.value, "script", null)
       }
     }
 
     options {
       substitution_option = "ALLOW_LOOSE"
-      env                 = concat(
+      env = concat(
         var.env_vars,
         local.base_substitutions_as_env_vars,
         local.custom_substitutions_as_env_vars
       )
-      logging             = local.effective_logging
-      machine_type        = var.machine_type
+      logging      = local.effective_logging
+      machine_type = var.machine_type
     }
   }
 
-  ignored_files = var.ignored_files
+  ignored_files  = var.ignored_files
   included_files = var.included_files
 }
 
@@ -147,11 +147,11 @@ resource "google_project_iam_member" "access_build" {
   for_each = { for build_policy in var.build_policies : build_policy.role => build_policy }
   project  = var.project_id
 
-  role    = each.value.role
+  role = each.value.role
   member = (var.service_account_id != null
-      ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
-      : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
-    )
+    ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
+    : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  )
 
   dynamic "condition" {
     for_each = try(each.value.expression, null) != null ? [each.value] : []
@@ -168,8 +168,8 @@ resource "google_project_iam_member" "cross_project_access_deploy" {
   for_each = { for deploy_policy in var.deploy_policies : deploy_policy.role => deploy_policy }
   project  = var.deploy_project_id
 
-  role    = each.value.role
-  member  = (var.service_account_id != null
+  role = each.value.role
+  member = (var.service_account_id != null
     ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
     : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
   )
@@ -201,10 +201,10 @@ resource "google_artifact_registry_repository_iam_member" "private_library_artif
   provider = google
   for_each = toset(var.read_artifacts_repos)
 
-  project  = split("/", each.value)[0]
-  location = split("/", each.value)[1]
+  project    = split("/", each.value)[0]
+  location   = split("/", each.value)[1]
   repository = split("/", each.value)[2]
-  role = "roles/artifactregistry.reader"
+  role       = "roles/artifactregistry.reader"
   member = (var.service_account_id != null
     ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
     : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"

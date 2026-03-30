@@ -6,33 +6,33 @@ variable "project_id" {
 variable "users" {
   description = "A list of user email addresses"
   default     = []
-  type = list(string)
+  type        = list(string)
 }
 
 variable "groups" {
   description = "A list of group email addresses"
   default     = []
-  type = list(string)
+  type        = list(string)
 }
 
 variable "serviceAccounts" {
   description = "A list of service account email addresses"
   default     = []
-  type = list(string)
+  type        = list(string)
 }
 
 variable "domains" {
   description = "A list of domain names"
   default     = []
-  type = list(string)
+  type        = list(string)
 }
 
 variable "roles_with_conditions" {
   description = "A list of IAM roles with their corresponding condition expressions"
-  default = []
+  default     = []
   type = list(object({
-    role                  = string
-    condition_title       = optional(string)
-    condition_expression  = optional(string) 
+    role                 = string
+    condition_title      = optional(string)
+    condition_expression = optional(string)
   }))
 }

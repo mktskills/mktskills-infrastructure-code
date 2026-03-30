@@ -25,5 +25,5 @@ module "platform_backend_api_dev" {
     region         = local.env_main_region
     cloud_run_name = "crunserv-${local.project_folder_code}-backend-api-dev"
   }]
-  enable_health_check = false  # Serverless NEGs do not support LB health checks; Cloud Run self-manages health
+  enable_health_check = false # Serverless NEGs do not support LB health checks; Cloud Run self-manages health
 }

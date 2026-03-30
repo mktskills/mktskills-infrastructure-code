@@ -2,7 +2,7 @@ resource "google_project_service" "artifact_registry" {
   provider = google
   project  = var.project_id
 
-  service           = "artifactregistry.googleapis.com"
+  service            = "artifactregistry.googleapis.com"
   disable_on_destroy = false
 }
 
@@ -39,11 +39,11 @@ resource "google_artifact_registry_repository" "artreg_repo" {
       dynamic "upstream_policies" {
         for_each = { for upstream_policy in var.virtual_repo_upstream_policies : upstream_policy.id => upstream_policy }
         content {
-          id  = upstream_policies.value.id
+          id         = upstream_policies.value.id
           repository = upstream_policies.value.repository
-          priority = lookup(upstream_policies.value, "priority", null)
+          priority   = lookup(upstream_policies.value, "priority", null)
         }
-      }        
+      }
     }
   }
 
@@ -82,15 +82,15 @@ resource "google_artifact_registry_repository" "artreg_repo" {
     }
   }
 
-  depends_on    = [google_project_service.artifact_registry]
+  depends_on = [google_project_service.artifact_registry]
 }
 
 resource "google_artifact_registry_repository_iam_member" "artreg_repo_readers" {
   provider = google
   project  = var.project_id
   count    = length(var.read_principals)
-  
-  location = var.location
+
+  location   = var.location
   repository = google_artifact_registry_repository.artreg_repo.name
 
   role   = "roles/artifactregistry.reader"
@@ -101,8 +101,8 @@ resource "google_artifact_registry_repository_iam_member" "artreg_repo_writers" 
   provider = google
   project  = var.project_id
   count    = length(var.write_principals)
-  
-  location = var.location
+
+  location   = var.location
   repository = google_artifact_registry_repository.artreg_repo.name
 
   role   = "roles/artifactregistry.writer"

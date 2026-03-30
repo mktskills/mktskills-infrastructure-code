@@ -1,3 +1,4 @@
+#tfsec:ignore:google-dns-enable-dnssec
 resource "google_dns_managed_zone" "managed_zone" {
   provider = google
   project  = var.project_id

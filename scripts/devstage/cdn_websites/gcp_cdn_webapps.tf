@@ -16,11 +16,11 @@ module "platform_web_app_dev" {
   }
   project_id = local.project_id_devstage
 
-  website_id              = "${local.project_folder_code}-webapp-website-dev"
-  bucket_location         = local.env_main_region
-  subdomains              = ["www-${local.dev_subdomain_token}"]
-  full_domains            = ["www-${local.dev_subdomain_token}.mktskills.ai"]
-  dns_managed_zone_name   = "dnszone-${local.project_folder_code}-mktskillsai"
+  website_id                  = "${local.project_folder_code}-webapp-website-dev"
+  bucket_location             = local.env_main_region
+  subdomains                  = ["www-${local.dev_subdomain_token}"]
+  full_domains                = ["www-${local.dev_subdomain_token}.mktskills.ai"]
+  dns_managed_zone_name       = "dnszone-${local.project_folder_code}-mktskillsai"
   dns_managed_zone_project_id = local.dns_zone_project_id
 
   # SPA fallback: LB intercepts 4xx from GCS and serves app/index.html with 200.

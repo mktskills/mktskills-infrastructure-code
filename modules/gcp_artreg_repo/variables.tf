@@ -61,12 +61,12 @@ variable "maven_version_policy" {
 
 variable "virtual_repo_upstream_policies" {
   description = "A list of upstream policies for virtual repositories."
-  type        = list(object({
+  type = list(object({
     id         = string
     repository = string
     priority   = optional(number)
   }))
-  default     = []
+  default = []
 }
 
 variable "remote_repo_description" {
