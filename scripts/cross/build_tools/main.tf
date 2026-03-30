@@ -8,6 +8,9 @@ variable "project_id" {
 variable "project_folder_code" {
   type = string
 }
+variable "env" {
+  type = string
+}
 variable "env_main_region" {
   type = string
 }
@@ -30,6 +33,7 @@ variable "backend_app_repo_id" {
 locals {
   project_id_cross       = var.project_id
   project_folder_code    = var.project_folder_code
+  env                    = var.env  #tflint-ignore: terraform_unused_declarations
   env_main_region        = var.env_main_region
   project_id_devstage    = var.project_id_devstage
   project_id_prod        = var.project_id_prod

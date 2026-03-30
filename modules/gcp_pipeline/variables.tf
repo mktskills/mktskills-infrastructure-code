@@ -24,6 +24,12 @@ variable "service_account_id" {
   default     = null
 }
 
+variable "env" {
+  description = "Environment label for the pipeline (e.g. dev, prod)."
+  type        = string
+  default     = null
+}
+
 variable "repo_type" {
   description = "The type of repo to monitor (SOURCEREPO, GITHUB, GITHUB_V2)"
   type        = string
