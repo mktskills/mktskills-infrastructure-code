@@ -25,7 +25,7 @@ module "secret_db" {
   read_principals = local._sa
 }
 
-# {"JWT_SECRET": "...", "OAUTH_STATE_SECRET": "..."}
+# {"JWT_SECRET": "...", "OAUTH_STATE_SECRET": "...", "TOKEN_ENCRYPTION_KEY": "..."}
 module "secret_session" {
   source          = "../../../modules/gcp_secret_manager"
   providers       = { google = google }
