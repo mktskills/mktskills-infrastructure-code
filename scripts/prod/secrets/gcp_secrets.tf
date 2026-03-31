@@ -61,7 +61,7 @@ module "secret_daytona" {
   read_principals = local._sa
 }
 
-# {"SENDGRID_API_KEY": "..."}  — Messaging services (SendGrid, future: Twilio, etc.)
+# {"RESEND_API_KEY": "..."}  — Messaging services (Resend, future: Twilio, etc.)
 module "secret_messaging" {
   source          = "../../../modules/gcp_secret_manager"
   providers       = { google = google }
