@@ -81,8 +81,7 @@ module "pipeline_backend_dev" {
   write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
   deploy_project_id     = local.project_id_devstage
   deploy_policies = [{
-    role       = "roles/run.admin"
-    expression = "resource.name.startsWith(\"projects/${local.project_id_devstage}/locations/${local.env_main_region}/services/crunserv-${local.project_folder_code}-backend-api-dev\")"
+    role = "roles/run.admin"
   }]
   steps = [
     local.backend_build_step,
@@ -132,8 +131,7 @@ module "pipeline_backend_prod" {
   write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
   deploy_project_id     = local.project_id_prod
   deploy_policies = [{
-    role       = "roles/run.admin"
-    expression = "resource.name.startsWith(\"projects/${local.project_id_prod}/locations/${local.env_main_region}/services/crunserv-${local.project_folder_code}-backend-api-prod\")"
+    role = "roles/run.admin"
   }]
   steps = [
     local.backend_build_step,
