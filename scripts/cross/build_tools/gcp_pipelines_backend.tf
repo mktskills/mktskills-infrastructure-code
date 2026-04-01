@@ -35,6 +35,13 @@ locals {
     ]
   }
 
+  backend_migrate_step = {
+    name       = "${local.env_main_region}-docker.pkg.dev/${local.project_id_cross}/${local.backend_artifacts_repo}/mktskills-backend-api:$COMMIT_SHA-$BUILD_ID"
+    entrypoint = "uv"
+    args       = ["run", "alembic", "upgrade", "head"]
+    secret_env = ["SECRET_DB"]
+  }
+
   backend_deploy_step = {
     name = "gcr.io/cloud-builders/gcloud"
     args = [
@@ -79,6 +86,7 @@ module "pipeline_backend_dev" {
     role = "roles/logging.logWriter"
   }]
   write_artifacts_repos         = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
+  read_secrets                  = ["${local.project_id_devstage}/secret-${local.project_folder_code}-db-dev"]
   logging                       = "CLOUD_LOGGING_ONLY"
   deploy_project_id             = local.project_id_devstage
   deploy_act_as_service_account = ["${local.project_folder_code}-backend-api-dev@${local.project_id_devstage}.iam.gserviceaccount.com"]
@@ -88,8 +96,13 @@ module "pipeline_backend_dev" {
   steps = [
     local.backend_build_step,
     local.backend_push_step,
+    local.backend_migrate_step,
     local.backend_deploy_step,
   ]
+  available_secrets = [{
+    version_name = "projects/${local.project_id_devstage}/secrets/secret-${local.project_folder_code}-db-dev/versions/latest"
+    env          = "SECRET_DB"
+  }]
   substitutions = {
     _IMAGE_NAME             = "mktskills-backend-api"
     _ENV                    = "dev"
@@ -131,6 +144,7 @@ module "pipeline_backend_prod" {
     role = "roles/logging.logWriter"
   }]
   write_artifacts_repos         = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
+  read_secrets                  = ["${local.project_id_prod}/secret-${local.project_folder_code}-db-prod"]
   logging                       = "CLOUD_LOGGING_ONLY"
   deploy_project_id             = local.project_id_prod
   deploy_act_as_service_account = ["${local.project_folder_code}-backend-api-prod@${local.project_id_prod}.iam.gserviceaccount.com"]
@@ -140,8 +154,13 @@ module "pipeline_backend_prod" {
   steps = [
     local.backend_build_step,
     local.backend_push_step,
+    local.backend_migrate_step,
     local.backend_deploy_step,
   ]
+  available_secrets = [{
+    version_name = "projects/${local.project_id_prod}/secrets/secret-${local.project_folder_code}-db-prod/versions/latest"
+    env          = "SECRET_DB"
+  }]
   substitutions = {
     _IMAGE_NAME             = "mktskills-backend-api"
     _ENV                    = "prod"

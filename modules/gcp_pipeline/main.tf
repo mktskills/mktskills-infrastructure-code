@@ -93,6 +93,20 @@ resource "google_cloudbuild_trigger" "repo_trigger" {
         args       = lookup(step.value, "args", null)
         entrypoint = lookup(step.value, "entrypoint", null)
         script     = lookup(step.value, "script", null)
+        secret_env = lookup(step.value, "secret_env", null)
+      }
+    }
+
+    dynamic "available_secrets" {
+      for_each = length(var.available_secrets) > 0 ? [1] : []
+      content {
+        dynamic "secret_manager" {
+          for_each = var.available_secrets
+          content {
+            version_name = secret_manager.value.version_name
+            env          = secret_manager.value.env
+          }
+        }
       }
     }
 
@@ -205,6 +219,19 @@ resource "google_artifact_registry_repository_iam_member" "private_library_artif
   location   = split("/", each.value)[1]
   repository = split("/", each.value)[2]
   role       = "roles/artifactregistry.reader"
+  member = (var.service_account_id != null
+    ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
+    : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  )
+}
+
+resource "google_secret_manager_secret_iam_member" "build_secret_access" {
+  provider = google
+  for_each = toset(var.read_secrets)
+
+  project   = split("/", each.value)[0]
+  secret_id = split("/", each.value)[1]
+  role      = "roles/secretmanager.secretAccessor"
   member = (var.service_account_id != null
     ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
     : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"

@@ -98,6 +98,7 @@ variable "steps" {
     args       = optional(list(string))
     script     = optional(string)
     entrypoint = optional(string)
+    secret_env = optional(list(string))
   }))
 }
 
@@ -153,6 +154,21 @@ variable "map_base_substitutions_to_env_vars" {
   description = "Map base substitutions to environment variables."
   type        = bool
   default     = false
+}
+
+variable "available_secrets" {
+  description = "Secrets from Secret Manager to expose to build steps via secret_env."
+  type = list(object({
+    version_name = string
+    env          = string
+  }))
+  default = []
+}
+
+variable "read_secrets" {
+  description = "Secret Manager secrets the build SA needs to read. Format: project/secret_id"
+  type        = list(string)
+  default     = []
 }
 
 variable "read_artifacts_repos" {
