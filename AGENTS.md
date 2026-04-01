@@ -61,6 +61,17 @@ scripts/tf prod plan
 scripts/tf devstage apply -target=module.devstage_cdn
 ```
 
+**Targeted apply — use the module name from the stack's `main.tf`, not the submodule.**
+The `-target` path must match the `module "<name>"` block in `scripts/<stack>/main.tf`, not a nested module inside the submodule folder.
+
+```bash
+# cross/dns/ changes → target is module.cross_dns (name in scripts/cross/main.tf)
+scripts/tf cross apply -target=module.cross_dns
+
+# Wrong — too deep; targets only the nested module, misses sibling resources
+scripts/tf cross apply -target=module.cross_dns.module.dns_zone_mktskillsai
+```
+
 ## Pre-apply Checklist
 
 1. GCS state bucket exists: `gsutil ls gs://csbuck-mktskills-infrastructure-tfstate`
