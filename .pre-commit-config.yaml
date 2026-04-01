@@ -1,0 +1,26 @@
+repos:
+  - repo: local
+    hooks:
+      - id: terraform-fmt
+        name: terraform fmt
+        entry: terraform fmt
+        args: [-check, -recursive]
+        language: system
+        pass_filenames: false
+        types: [terraform]
+
+      - id: tflint
+        name: tflint
+        entry: tflint
+        args: [--recursive]
+        language: system
+        pass_filenames: false
+        types: [terraform]
+
+      - id: tfsec
+        name: tfsec
+        entry: tfsec
+        args: [.]
+        language: system
+        pass_filenames: false
+        types: [terraform]
