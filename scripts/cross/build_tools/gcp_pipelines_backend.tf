@@ -96,7 +96,7 @@ module "pipeline_backend_dev" {
     _DEPLOY_PROJECT_ID      = local.project_id_devstage
     _SERVICE_NAME           = "crunserv-${local.project_folder_code}-backend-api-dev"
     _SERVICE_ACCOUNT        = "${local.project_folder_code}-backend-api-dev@${local.project_id_devstage}.iam.gserviceaccount.com"
-    _CLOUDRUN_MEMORY        = "512Mi"
+    _CLOUDRUN_MEMORY        = "1Gi"
     _CLOUDRUN_VCPU          = "1"
     _CLOUDRUN_MIN_INSTANCES = "0"
     _CLOUDRUN_MAX_INSTANCES = "3"
