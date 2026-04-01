@@ -79,9 +79,9 @@ module "pipeline_backend_dev" {
     role = "roles/logging.logWriter"
   }]
   write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
-  deploy_project_id = local.project_id_devstage
+  deploy_project_id     = local.project_id_devstage
   deploy_policies = [{
-    role       = "roles/run.developer"
+    role       = "roles/run.admin"
     expression = "resource.name.startsWith(\"projects/${local.project_id_devstage}/locations/${local.env_main_region}/services/crunserv-${local.project_folder_code}-backend-api-dev\")"
   }]
   steps = [
@@ -130,9 +130,9 @@ module "pipeline_backend_prod" {
     role = "roles/logging.logWriter"
   }]
   write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
-  deploy_project_id = local.project_id_prod
+  deploy_project_id     = local.project_id_prod
   deploy_policies = [{
-    role       = "roles/run.developer"
+    role       = "roles/run.admin"
     expression = "resource.name.startsWith(\"projects/${local.project_id_prod}/locations/${local.env_main_region}/services/crunserv-${local.project_folder_code}-backend-api-prod\")"
   }]
   steps = [
