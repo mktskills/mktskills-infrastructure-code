@@ -100,6 +100,7 @@ variable "steps" {
     entrypoint = optional(string)
     secret_env = optional(list(string))
     env        = optional(list(string))
+    dir        = optional(string)
   }))
 }
 

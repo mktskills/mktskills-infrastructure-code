@@ -38,9 +38,10 @@ locals {
   backend_migrate_step = {
     name       = "${local.env_main_region}-docker.pkg.dev/${local.project_id_cross}/${local.backend_artifacts_repo}/mktskills-backend-api:$COMMIT_SHA-$BUILD_ID"
     entrypoint = "uv"
-    args       = ["run", "alembic", "upgrade", "head"]
+    args       = ["run", "--no-sync", "alembic", "upgrade", "head"]
     secret_env = ["SECRET_DB"]
-    env        = ["UV_CACHE_DIR=/tmp/uv-cache"]
+    env        = ["UV_PROJECT_ENVIRONMENT=/app/.venv"]
+    dir        = "/app"
   }
 
   backend_deploy_step = {
