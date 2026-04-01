@@ -40,6 +40,7 @@ locals {
     entrypoint = "uv"
     args       = ["run", "alembic", "upgrade", "head"]
     secret_env = ["SECRET_DB"]
+    env        = ["UV_CACHE_DIR=/tmp/uv-cache"]
   }
 
   backend_deploy_step = {

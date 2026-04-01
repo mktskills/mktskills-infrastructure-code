@@ -99,6 +99,7 @@ variable "steps" {
     script     = optional(string)
     entrypoint = optional(string)
     secret_env = optional(list(string))
+    env        = optional(list(string))
   }))
 }
 

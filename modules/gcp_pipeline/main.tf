@@ -94,6 +94,7 @@ resource "google_cloudbuild_trigger" "repo_trigger" {
         entrypoint = lookup(step.value, "entrypoint", null)
         script     = lookup(step.value, "script", null)
         secret_env = lookup(step.value, "secret_env", null)
+        env        = lookup(step.value, "env", null)
       }
     }
 
