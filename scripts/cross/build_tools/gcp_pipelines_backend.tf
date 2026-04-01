@@ -40,7 +40,7 @@ locals {
     entrypoint = "uv"
     args       = ["run", "--no-sync", "alembic", "upgrade", "head"]
     secret_env = ["SECRET_DB"]
-    env        = ["UV_PROJECT_ENVIRONMENT=/app/.venv"]
+    env        = ["UV_CACHE_DIR=/tmp/uv-cache", "UV_PROJECT_ENVIRONMENT=/app/.venv"]
     dir        = "/app"
   }
 
