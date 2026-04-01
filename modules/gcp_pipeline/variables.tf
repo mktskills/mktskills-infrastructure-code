@@ -160,3 +160,9 @@ variable "read_artifacts_repos" {
   type        = list(string)
   default     = []
 }
+
+variable "write_artifacts_repos" {
+  description = "The list of artifacts repositories to push images to. format: project/location/repository"
+  type        = list(string)
+  default     = []
+}

@@ -77,10 +77,8 @@ module "pipeline_backend_dev" {
   repo_name          = "mktskills/mktskills-backend-app"
   build_policies = [{
     role = "roles/logging.logWriter"
-    }, {
-    role       = "roles/artifactregistry.writer"
-    expression = "resource.name.startsWith(\"projects/${local.project_id_cross}/locations/${local.env_main_region}/repositories/${local.backend_artifacts_repo}\")"
   }]
+  write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
   deploy_project_id = local.project_id_devstage
   deploy_policies = [{
     role       = "roles/run.developer"
@@ -130,10 +128,8 @@ module "pipeline_backend_prod" {
   repo_name          = "mktskills/mktskills-backend-app"
   build_policies = [{
     role = "roles/logging.logWriter"
-    }, {
-    role       = "roles/artifactregistry.writer"
-    expression = "resource.name.startsWith(\"projects/${local.project_id_cross}/locations/${local.env_main_region}/repositories/${local.backend_artifacts_repo}\")"
   }]
+  write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
   deploy_project_id = local.project_id_prod
   deploy_policies = [{
     role       = "roles/run.developer"

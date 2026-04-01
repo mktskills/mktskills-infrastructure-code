@@ -210,3 +210,17 @@ resource "google_artifact_registry_repository_iam_member" "private_library_artif
     : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
   )
 }
+
+resource "google_artifact_registry_repository_iam_member" "artifact_registry_write_access" {
+  provider = google
+  for_each = toset(var.write_artifacts_repos)
+
+  project    = split("/", each.value)[0]
+  location   = split("/", each.value)[1]
+  repository = split("/", each.value)[2]
+  role       = "roles/artifactregistry.writer"
+  member = (var.service_account_id != null
+    ? "serviceAccount:${google_service_account.pipeline_service_account[0].email}"
+    : "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  )
+}
