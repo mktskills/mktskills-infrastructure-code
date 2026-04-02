@@ -17,5 +17,17 @@ module "bucket_webapp_artifacts" {
   }]
 }
 
+# Skills bucket: stores skill definitions for Daytona sandbox injection
+module "bucket_skills" {
+  source = "../../../modules/gcp_storage_bucket"
+  providers = {
+    google = google
+  }
+  project_id  = local.project_id
+  bucket_name = "${local.project_folder_code}-skills-cross"
+  location    = local.env_main_region
+  versioning  = true
+}
+
 # TF state bucket (created manually before first terraform init)
 # module "bucket_tfstate" { ... }
