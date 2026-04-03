@@ -44,6 +44,9 @@ locals {
     dir        = "/app"
   }
 
+  # Alembic reads SECRET_DB — the migrate step binds the DDL-capable migration
+  # secret to that env var, while Cloud Run gets the restricted app secret.
+
   backend_deploy_step = {
     name = "gcr.io/cloud-builders/gcloud"
     args = [
@@ -87,8 +90,10 @@ module "pipeline_backend_dev" {
   build_policies = [{
     role = "roles/logging.logWriter"
   }]
-  write_artifacts_repos         = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
-  read_secrets                  = ["${local.project_id_devstage}/secret-${local.project_folder_code}-db-dev"]
+  write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
+  read_secrets = [
+    "${local.project_id_devstage}/secret-${local.project_folder_code}-db-migrate-dev",
+  ]
   logging                       = "CLOUD_LOGGING_ONLY"
   deploy_project_id             = local.project_id_devstage
   deploy_act_as_service_account = ["${local.project_folder_code}-backend-api-dev@${local.project_id_devstage}.iam.gserviceaccount.com"]
@@ -102,7 +107,7 @@ module "pipeline_backend_dev" {
     local.backend_deploy_step,
   ]
   available_secrets = [{
-    version_name = "projects/${local.project_id_devstage}/secrets/secret-${local.project_folder_code}-db-dev/versions/latest"
+    version_name = "projects/${local.project_id_devstage}/secrets/secret-${local.project_folder_code}-db-migrate-dev/versions/latest"
     env          = "SECRET_DB"
   }]
   substitutions = {
@@ -145,8 +150,10 @@ module "pipeline_backend_prod" {
   build_policies = [{
     role = "roles/logging.logWriter"
   }]
-  write_artifacts_repos         = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
-  read_secrets                  = ["${local.project_id_prod}/secret-${local.project_folder_code}-db-prod"]
+  write_artifacts_repos = ["${local.project_id_cross}/${local.env_main_region}/${local.backend_artifacts_repo}"]
+  read_secrets = [
+    "${local.project_id_prod}/secret-${local.project_folder_code}-db-migrate-prod",
+  ]
   logging                       = "CLOUD_LOGGING_ONLY"
   deploy_project_id             = local.project_id_prod
   deploy_act_as_service_account = ["${local.project_folder_code}-backend-api-prod@${local.project_id_prod}.iam.gserviceaccount.com"]
@@ -160,7 +167,7 @@ module "pipeline_backend_prod" {
     local.backend_deploy_step,
   ]
   available_secrets = [{
-    version_name = "projects/${local.project_id_prod}/secrets/secret-${local.project_folder_code}-db-prod/versions/latest"
+    version_name = "projects/${local.project_id_prod}/secrets/secret-${local.project_folder_code}-db-migrate-prod/versions/latest"
     env          = "SECRET_DB"
   }]
   substitutions = {

@@ -61,6 +61,15 @@ module "secret_daytona" {
   read_principals = local._sa
 }
 
+# {"URL": "postgresql+asyncpg://db_migrator_ci:..."}  — DDL-capable, used by Cloud Build for Alembic migrations
+module "secret_db_migrate" {
+  source          = "../../../modules/gcp_secret_manager"
+  providers       = { google = google }
+  project_id      = local.project_id
+  secret_id       = "secret-${local.project_folder_code}-db-migrate-prod"
+  read_principals = [] # Build SA gets access via pipeline module's read_secrets
+}
+
 # {"RESEND_API_KEY": "..."}  — Messaging services (Resend, future: Twilio, etc.)
 module "secret_messaging" {
   source          = "../../../modules/gcp_secret_manager"
