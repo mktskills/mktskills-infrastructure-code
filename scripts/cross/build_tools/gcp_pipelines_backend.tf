@@ -56,7 +56,7 @@ locals {
       "--platform=managed",
       "--project=$_DEPLOY_PROJECT_ID",
       "--service-account=$_SERVICE_ACCOUNT",
-      "--no-allow-unauthenticated",
+      "--allow-unauthenticated",
       "--ingress=internal-and-cloud-load-balancing",
       "--cpu-throttling",
       "--memory=$_CLOUDRUN_MEMORY",
