@@ -34,7 +34,7 @@ module "secret_session" {
   read_principals = local._sa
 }
 
-# {"ANTHROPIC_API_KEY": "...", "OPENROUTER_API_KEY": "...", ...}
+# {"ANTHROPIC_API_KEY": "...", "OPENROUTER_API_KEY": "...", "GEMINI_API_KEY": "...", ...}
 module "secret_aimodels" {
   source          = "../../../modules/gcp_secret_manager"
   providers       = { google = google }
